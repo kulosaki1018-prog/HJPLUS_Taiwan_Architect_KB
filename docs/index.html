@@ -296,8 +296,8 @@
       </div>
       <div class="evidence-card">
         <h3>貢獻者</h3>
-        <p>8 位貢獻者，來自建築師事務所、工程顧問、營造廠、室內裝修、學界。改一個錯字也算貢獻。</p>
-        <div class="contributors">
+        <p><span id="contribCount">8</span> 位貢獻者，來自建築師事務所、工程顧問、營造廠、室內裝修、學界。改一個錯字也算貢獻。</p>
+        <div class="contributors" id="contribList">
           <span class="contributor">hh</span>
           <span class="contributor">Alex Huang</span>
           <span class="contributor">Archwiz-boss</span>
@@ -406,6 +406,22 @@
     if (c[0]) c[0].textContent = stats.c;
     if (c[1]) c[1].textContent = stats.con;
     if (c[2]) c[2].textContent = stats.s + '+';
+    // contributor list
+    if (stats.conList) {
+      var cl = document.getElementById('contribList');
+      if (cl) {
+        cl.innerHTML = '';
+        stats.conList.forEach(function(name) {
+          var s = document.createElement('span');
+          s.className = 'contributor';
+          s.textContent = name;
+          cl.appendChild(s);
+        });
+      }
+    }
+    // contributor count
+    var cc = document.getElementById('contribCount');
+    if (cc) cc.textContent = stats.con;
   }
 
   var cached = sessionStorage.getItem('gh-stats');
@@ -415,7 +431,11 @@
     var c = parseLink(r.headers.get('Link')) || 82;
     return Promise.all([
       c,
-      fetch(BASE + '/contributors?per_page=1').then(function(r) { return parseLink(r.headers.get('Link')) || 8; }),
+      fetch(BASE + '/contributors?per_page=30').then(function(r) {
+        return Promise.all([parseLink(r.headers.get('Link')), r.json()]);
+      }).then(function(a) {
+        return { count: a[0] || a[1].length, names: a[1].map(function(u) { return u.login; }) };
+      }),
       fetch(BASE + '/contents/raw').then(function(r) { return r.json(); }).then(function(d) {
         return Array.isArray(d) ? d.filter(function(i) { return i.type === 'dir'; }).length : 10;
       }),
@@ -424,7 +444,7 @@
       })
     ]);
   }).then(function(a) {
-    var stats = { c: a[0], con: a[1], cat: a[2], s: a[3] };
+    var stats = { c: a[0], con: a[1].count, cat: a[2], s: a[3], conList: a[1].names };
     sessionStorage.setItem('gh-stats', JSON.stringify(stats));
     apply(stats);
   }).catch(function() { /* keep hardcoded */ });
