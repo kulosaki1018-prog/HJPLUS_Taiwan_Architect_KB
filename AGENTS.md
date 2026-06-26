@@ -67,6 +67,52 @@ File placement:
 ❌ Wrong: `消防安全/排煙窗法規檢討/SKILL.md` (no English subdirectory)
 ❌ Wrong: `pai-yan-chuang/SKILL.md` (pinyin instead of English)
 
+## index.md — OKF Directory Index (v0.1)
+
+This project follows the `index.md` convention from Google's
+[Open Knowledge Format (OKF) v0.1](https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md)
+to support progressive discovery for AI agents.
+
+**When exploring a directory, always read `index.md` first** (not `README.md`).
+`index.md` is the agent entry point — it lists available skills and subdirectories
+so you can discover content without scanning every file. `README.md` is for human
+readers browsing GitHub and may be stale or incomplete.
+
+### When to add index.md
+
+| Condition | index.md? |
+|-----------|:---------:|
+| Directory contains **2+** subdirectories or skills | ✅ Yes |
+| Directory IS a knowledge entry (has `domain.md`) | ❌ No |
+| Directory IS a skill directory (has `SKILL.md`) | ❌ No |
+| `raw/` (bundle root) | ✅ Yes (with `okf_version: "0.1"`) |
+
+Rule of thumb: **If a directory holds multiple things, it gets an index. If it IS one thing, it doesn't.**
+
+### index.md Format
+
+```markdown
+# Category Name (English)
+
+## Skills
+
+* [Skill Name](relative/path/SKILL.md) - Copy from SKILL.md frontmatter `description` field
+* [Skill Name](relative/path/SKILL.md) - ...
+
+## Planned
+
+* [Planned directory](path/) - Brief description
+```
+
+- No frontmatter on subdirectory index.md (only `raw/index.md` may have `okf_version`)
+- Link skills directly to `SKILL.md`
+- Link subdirectories with trailing `/`
+- Do NOT list `domain.md` or `README.md`
+
+### Maintenance
+
+- OKF is currently **v0.1 draft** (June 2026). Revisit this section if the spec updates.
+
 ## SKILL.md Frontmatter
 ```yaml
 ---
@@ -117,7 +163,7 @@ pcc-downloader_download_specification(chapter="09", keyword="09910", format="pdf
 4. Write `SKILL.md` with frontmatter (`name` must match dir name)
 5. Write `domain.md` in Traditional Chinese
 6. Delete unused `assets/`, `references/`, `scripts/` subdirectories
-7. Update parent `README.md` if one exists
+7. **Update parent `index.md`**: If the parent directory has an `index.md`, add a new entry under `## Skills`. If it doesn't have one but qualifies (multiple children), create it.
 
 ## Editing Existing Skills
 - Never delete `SKILL.md` or `domain.md` without replacement
@@ -125,6 +171,7 @@ pcc-downloader_download_specification(chapter="09", keyword="09910", format="pdf
 - Keep frontmatter intact; sync `name` with directory name
 - Sync changes between SKILL.md and domain.md
 - Preserve `<!-- TODO -->` markers in B-class skills
+- When adding or removing a skill, update the parent directory's `index.md` accordingly
 
 ## Markdown Style
 - One `# H1` per file
