@@ -441,7 +441,7 @@
   <div class="hero-overlay"></div>
   <div class="container">
     <div id="eventList">
-      <div class="event-empty">讀取中…</div>
+      <div class="event-card" style="border-color:rgba(255,255,255,0.06)"><div class="event-info"><div class="event-meta" style="color:rgba(255,255,255,0.2);font-size:0.9375rem;margin:0">讀取中…</div></div></div>
     </div>
 
     <h2 style="margin-top:48px">你已經看到這裡了。</h2>
@@ -681,14 +681,14 @@ setTimeout(() => {
     .then(function(r) { return r.json(); })
     .then(function(issues) {
       if (!Array.isArray(issues) || issues.length === 0) {
-        list.innerHTML = '<div class="event-empty">目前沒有排定的活動。想辦一場？<br>到 <a href="https://github.com/h30190/HJPLUS_Taiwan_Architect_KB/issues/new/choose">GitHub Issues</a> 開一張活動公告</div>';
+        list.innerHTML = '<div class="event-card" style="border-color:rgba(255,255,255,0.08)"><div class="event-info"><div class="event-meta" style="color:rgba(255,255,255,0.3);font-size:0.9375rem;margin:0">活動資訊尚未公布，敬請持續關注。</div></div></div>';
         return;
       }
       sessionStorage.setItem('gh-events', JSON.stringify(issues));
       render(issues);
     })
     .catch(function() {
-      list.innerHTML = '<div class="event-empty">目前沒有排定的活動。</div>';
+      list.innerHTML = '<div class="event-card" style="border-color:rgba(255,255,255,0.08)"><div class="event-info"><div class="event-meta" style="color:rgba(255,255,255,0.3);font-size:0.9375rem;margin:0">活動資訊尚未公布，敬請持續關注。</div></div></div>';
     });
 
   function render(issues) {
@@ -735,9 +735,7 @@ setTimeout(() => {
         (link ? '<div class="event-action"><a class="btn btn-primary" href="' + link + '" target="_blank" style="font-size:0.875rem;padding:10px 24px">報名</a></div>' : '') +
         '</div>';
     });
-    // add "提議活動" link at bottom
-    html += '<div style="text-align:right;margin-top:12px"><a href="https://github.com/h30190/HJPLUS_Taiwan_Architect_KB/issues/new/choose" style="color:#999;font-size:0.8125rem;text-decoration:none">＋ 提議一場活動</a></div>';
-    list.innerHTML = html;
+    list.innerHTML = html || '<div class="event-card" style="border-color:rgba(255,255,255,0.08)"><div class="event-info"><div class="event-meta" style="color:rgba(255,255,255,0.3);font-size:0.9375rem;margin:0">活動資訊尚未公布，敬請持續關注。</div></div></div>';
   }
 })();
 
